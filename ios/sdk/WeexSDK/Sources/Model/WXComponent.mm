@@ -678,7 +678,16 @@ static BOOL bNeedRemoveEvents = YES;
 
 - (void)_updateStylesOnComponentThread:(NSDictionary *)styles resetStyles:(NSMutableArray *)resetStyles isUpdateStyles:(BOOL)isUpdateStyles
 {
-    BOOL isTransitionTag = _transition ? [self _isTransitionTag:styles] : NO;
+    BOOL isTransitionTag = NO;
+    if (_transition) {
+        isTransitionTag = [self _isTransitionTag:styles];
+    }
+    else {
+        if (styles[kWXTransitionProperty]) {
+            _transition = [[WXTransition alloc]initWithStyles:styles];
+        }
+    }
+
     if (isTransitionTag) {
         [_transition _handleTransitionWithStyles:[styles mutableCopy] resetStyles:resetStyles target:self];
     } else {
